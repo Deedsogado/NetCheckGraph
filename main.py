@@ -8,7 +8,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 # Configuration
-LOG_FILE = "netcheck.log"  # Update with your actual log filename
+LOG_FILE = "connection_log.txt"  # Update with your actual log filename
 TIMEZONE = pytz.timezone("America/Denver")  # MST timezone
 
 def parse_log(log_file):
@@ -48,7 +48,7 @@ def convert_to_mst(timestamp_str):
 
 def generate_timeline(events):
     """Generate a timeline graph from the events."""
-    plt.figure(figsize=(10, 5))
+    plt.figure(figsize=(24, 5))
     for down, up in events:
         plt.plot([down, up], [1, 1], color='red', linewidth=5)
 
