@@ -4,6 +4,7 @@ import time
 import pytz
 import datetime
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
@@ -59,14 +60,23 @@ def convert_to_mst(timestamp_str):
 def generate_timeline(events):
     """Generate a timeline graph from the events."""
     times, statuses = zip(*events)
-    plt.figure(figsize=(48, 5))
+    plt.figure(figsize=(24, 9))
     plt.step(times, statuses, where='post', color='red', linewidth=2, label='Internet Status')
+
+    # Label individual points
+    for t, s in events:
+        plt.text(t, s, f'{t}', fontsize=9, verticalalignment='bottom' if s == 1 else 'top', rotation=45 if s == 1 else -45)
 
     plt.xlabel("Time")
     plt.ylabel("Status (1 = Up, 0 = Down)")
     plt.title("Internet Uptime vs. Downtime Timeline")
-    plt.yticks([0, 1], labels=["Down", "Up"])
+    plt.yticks([-1, 2], labels=["Down", "Up"])
     plt.grid(True, axis='x')
+
+    # Set x-axis to show every hour
+    plt.gca().xaxis.set_major_locator(mdates.HourLocator(interval=1))
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+
     plt.xticks(rotation=45)
     plt.legend()
     plt.tight_layout()
