@@ -1,3 +1,4 @@
+import logging
 import re
 import os
 import time
@@ -44,18 +45,17 @@ def parse_log(log_file):
 
 def convert_to_mst(timestamp_str):
     """Convert a timestamp string to MST."""
-    timestamp_formats = ["%a %d %b %Y %H:%M:%S %Z"]
-    for fmt in timestamp_formats:
-        try:
-            dt = datetime.datetime.strptime(timestamp_str, fmt)
-            if "UTC" in timestamp_str:
-                dt = pytz.utc.localize(dt).astimezone(TIMEZONE)
-            else:
-                dt = TIMEZONE.localize(dt)
-            return dt
-        except ValueError:
-            continue
-    return None
+    try:
+        parts = timestamp_str.rsplit(" ", 1)  # Remove time zone abbreviation
+        dt = datetime.datetime.strptime(parts[0], "%a %d %b %Y %H:%M:%S")
+        if "UTC" in timestamp_str:
+            dt = pytz.utc.localize(dt).astimezone(TIMEZONE)
+        else:
+            dt = TIMEZONE.localize(dt)
+        return dt
+    except ValueError as e:
+        logging.error(f"Error parsing timestamp: {timestamp_str} - {e}")
+        return None
 
 def generate_timeline(events):
     """Generate a timeline graph from the events."""
@@ -65,7 +65,7 @@ def generate_timeline(events):
 
     # Label individual points
     for t, s in events:
-        plt.text(t, s, f'{t}', fontsize=9, verticalalignment='bottom' if s == 1 else 'top', rotation=45 if s == 1 else -45)
+        plt.text(t, s, f'{t.strftime("%H:%M")}', fontsize=9, verticalalignment='bottom' if s == 1 else 'top', rotation=45 if s == 1 else -45)
 
     plt.xlabel("Time")
     plt.ylabel("Status (1 = Up, 0 = Down)")
