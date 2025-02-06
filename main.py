@@ -20,26 +20,17 @@ def parse_log(log_file):
         content = f.readlines()
 
     down_time = None
-    start_time = None
-    end_time = None
     for line in content:
         down_match = re.search(r'LINK DOWN:\s+(.*)', line)
         up_match = re.search(r'LINK RECONNECTED:\s+(.*)', line)
 
         if down_match:
             down_time = convert_to_mst(down_match.group(1))
-            if not start_time:
-                start_time = down_time
         elif up_match and down_time:
             up_time = convert_to_mst(up_match.group(1))
             events.append((down_time, 0))  # Down event
             events.append((up_time, 1))    # Up event
             down_time = None
-            end_time = up_time
-
-    if start_time and end_time:
-        events.insert(0, (start_time - datetime.timedelta(minutes=1), 1))  # Assume it was up before first recorded event
-        events.append((end_time + datetime.timedelta(minutes=1), 1))  # Assume it remained up after last event
 
     return sorted(events, key=lambda x: x[0])
 
@@ -58,27 +49,38 @@ def convert_to_mst(timestamp_str):
         return None
 
 def generate_timeline(events):
-    """Generate a timeline graph from the events."""
-    times, statuses = zip(*events)
-    plt.figure(figsize=(24, 9))
-    plt.step(times, statuses, where='post', color='red', linewidth=2, label='Internet Status')
+    """Generate a seismograph-like timeline graph, with each day on its own row."""
+    if not events:
+        return
 
-    # Label individual points
+    # Organize events by day
+    daily_events = {}
     for t, s in events:
-        plt.text(t, s, f'{t.strftime("%H:%M")}', fontsize=9, verticalalignment='bottom' if s == 1 else 'top', rotation=45 if s == 1 else -45)
+        date = t.date()
+        if date not in daily_events:
+            daily_events[date] = []
+        daily_events[date].append((t, s))
 
-    plt.xlabel("Time")
-    plt.ylabel("Status (1 = Up, 0 = Down)")
-    plt.title("Internet Uptime vs. Downtime Timeline")
-    plt.yticks([-1, 2], labels=["Down", "Up"])
-    plt.grid(True, axis='x')
+    # Sort days chronologically
+    sorted_dates = sorted(daily_events.keys())
+    num_days = len(sorted_dates)
 
-    # Set x-axis to show every hour
-    plt.gca().xaxis.set_major_locator(mdates.HourLocator(interval=1))
-    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+    fig, axes = plt.subplots(num_days, 1, figsize=(12, 2 * num_days), sharex=True, sharey=True)
+    if num_days == 1:
+        axes = [axes]
 
+    for ax, date in zip(axes, sorted_dates):
+        times, statuses = zip(*daily_events[date])
+        ax.step(times, statuses, where='post', color='red', linewidth=2)
+        ax.set_ylabel(date.strftime('%a %b %d'))
+        ax.yticks([-1, 2], labels=["Down", "Up"])
+        ax.xaxis.set_major_locator(mdates.HourLocator(interval=1))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+        ax.grid(True, axis='x')
+
+    plt.xlabel("Time (MST)")
+    plt.suptitle("Internet Uptime vs. Downtime Timeline")
     plt.xticks(rotation=45)
-    plt.legend()
     plt.tight_layout()
     plt.savefig("netcheck_timeline.png")
     plt.close()
