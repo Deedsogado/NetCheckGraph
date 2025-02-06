@@ -59,8 +59,12 @@ def generate_timeline(events):
         date = t.date()
         time_only = t.time()  # Strip the date, keeping only the time
         if date not in daily_events:
-            daily_events[date] = []
+            daily_events[date] = [(datetime.time(0, 0), 1)]  # Ensure continuity at start of day
         daily_events[date].append((time_only, s))
+
+    # Ensure continuity at end of day
+    for date in daily_events:
+        daily_events[date].append((datetime.time(23, 59, 59), daily_events[date][-1][1]))
 
     # Sort days chronologically
     sorted_dates = sorted(daily_events.keys())
