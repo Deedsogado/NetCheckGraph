@@ -53,6 +53,8 @@ def generate_timeline(events):
     if not events:
         return
 
+    now = datetime.datetime.now(TIMEZONE).time()  # Get current time
+
     # Organize events by day
     daily_events = {}
     for t, s in events:
@@ -62,9 +64,10 @@ def generate_timeline(events):
             daily_events[date] = [(datetime.time(0, 0), 1)]  # Ensure continuity at start of day
         daily_events[date].append((time_only, s))
 
-    # Ensure continuity at end of day
+    # Ensure continuity at end of day, but stop at current time for today
     for date in daily_events:
-        daily_events[date].append((datetime.time(23, 59, 59), daily_events[date][-1][1]))
+        end_time = now if date == datetime.datetime.now(TIMEZONE).date() else datetime.time(23, 59, 59)
+        daily_events[date].append((end_time, daily_events[date][-1][1]))
 
     # Sort days chronologically
     sorted_dates = sorted(daily_events.keys())

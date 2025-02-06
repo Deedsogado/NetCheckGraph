@@ -645,3 +645,19 @@ LINK RECONNECTED:                                Wed 05 Feb 2025 16:21:27 MST
 TOTAL DOWNTIME:                                  0 minutes and 55 seconds.
 RECONNECTED LINK SPEED:
 -----------------------------------------------------------------------------
+LINK DOWN:                                       Wed 05 Feb 2025 16:20:32 MST
+LINK RECONNECTED:                                Wed 05 Feb 2025 16:21:27 MST
+TOTAL DOWNTIME:                                  0 minutes and 55 seconds.
+RECONNECTED LINK SPEED:
+-----------------------------------------------------------------------------
+LINK DOWN:                                       Thu 06 Feb 2025 09:59:10 MST
+LINK RECONNECTED:                                Thu 06 Feb 2025 09:59:41 MST
+TOTAL DOWNTIME:                                  0 minutes and 31 seconds.
+RECONNECTED LINK SPEED:
+-----------------------------------------------------------------------------
+LINK DOWN:                                       Thu 06 Feb 2025 10:05:39 MST
+LINK RECONNECTED:                                Thu 06 Feb 2025 10:06:30 MST
+TOTAL DOWNTIME:                                  0 minutes and 51 seconds.
+RECONNECTED LINK SPEED:
+-----------------------------------------------------------------------------
+LINK DOWN:                                       Thu 06 Feb 2025 10:20:06 MST
