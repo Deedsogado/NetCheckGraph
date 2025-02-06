@@ -76,7 +76,9 @@ def generate_timeline(events):
         ax.step(times, statuses, where='post', color='red', linewidth=2)
         ax.set_ylabel(date.strftime('%a %b %d'))
         ax.xaxis.set_major_locator(mdates.HourLocator(interval=1))
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%I %p'))  # Show hours with AM/PM format
+        ax.set_yticks([0, 1])
+        ax.set_yticklabels(["Down", "Up"])  # Label y-axis as 'Up' and 'Down'
         ax.grid(True, axis='x')
 
     plt.xlabel("Time (MST)")
