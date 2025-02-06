@@ -77,6 +77,7 @@ def generate_timeline(events):
         ax.set_ylabel(date.strftime('%a %b %d'))
         ax.xaxis.set_major_locator(mdates.HourLocator(interval=1))
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%I %p'))  # Show hours with AM/PM format
+        ax.set_xlim(datetime.datetime(2000, 1, 1, 0, 0), datetime.datetime(2000, 1, 1, 23, 59, 59))  # Set x-axis from midnight to midnight
         ax.set_yticks([0, 1])
         ax.set_yticklabels(["Down", "Up"])  # Label y-axis as 'Up' and 'Down'
         ax.grid(True, axis='x')
