@@ -49,7 +49,7 @@ def convert_to_mst(timestamp_str):
         return None
 
 def generate_timeline(events):
-    """Generate a seismograph-like timeline graph, with each day on its own row."""
+    """Generate a seismograph-like timeline graph, with each day on its own row, aligning times across days."""
     if not events:
         return
 
@@ -57,9 +57,10 @@ def generate_timeline(events):
     daily_events = {}
     for t, s in events:
         date = t.date()
+        time_only = t.time()  # Strip the date, keeping only the time
         if date not in daily_events:
             daily_events[date] = []
-        daily_events[date].append((t, s))
+        daily_events[date].append((time_only, s))
 
     # Sort days chronologically
     sorted_dates = sorted(daily_events.keys())
@@ -71,9 +72,9 @@ def generate_timeline(events):
 
     for ax, date in zip(axes, sorted_dates):
         times, statuses = zip(*daily_events[date])
+        times = [datetime.datetime.combine(datetime.date(2000, 1, 1), t) for t in times]  # Align all times to a reference date
         ax.step(times, statuses, where='post', color='red', linewidth=2)
         ax.set_ylabel(date.strftime('%a %b %d'))
-        ax.yticks([-1, 2], labels=["Down", "Up"])
         ax.xaxis.set_major_locator(mdates.HourLocator(interval=1))
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
         ax.grid(True, axis='x')
