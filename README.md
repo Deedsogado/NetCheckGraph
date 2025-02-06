@@ -42,6 +42,8 @@ cd netcheckgraph
 ## Example Output
 The output graph organizes days in stacked rows, aligning times across days for clarity.
 
+![Graph of downtime](netcheck_timeline.png)
+
 ## License
 This project is licensed under the GPL-3.0 License.
 
